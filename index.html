@@ -256,12 +256,56 @@ function printBill(){
 
   let med=medicines[medIndex];
   let customer=customers[custIndex];
-
   let total=med.sell*qty;
   let discountAmount=total*(discount/100);
   let profit=(med.sell-med.buy)*qty-discountAmount;
 
-  let billContent=`<pre>
+  let billContent = `
+  <html>
+  <head>
+    <title>Bill</title>
+    <style>
+      body{font-family:Segoe UI; padding:20px;}
+      h1,h2{margin:0; text-align:center;}
+      table{width:100%; border-collapse:collapse; margin-top:10px;}
+      th,td{border:1px solid #000; padding:5px; text-align:center;}
+      .footer{margin-top:20px; text-align:center;}
+    </style>
+  </head>
+  <body>
+    <h1>${settings.storeName}</h1>
+    <h2>Pharmacist: ${settings.pharmaName}</h2>
+    <p>Phone: ${settings.phone} | Email: ${settings.email} | Address: ${settings.address}</p>
+    <hr>
+    <p>Customer: ${customer.name} | Phone: ${customer.phone}</p>
+    <p>Address: ${customer.address} | DOB: ${customer.dob}</p>
+    <p>Referred By: ${customer.referred}</p>
+    <table>
+      <tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th><th>Profit</th></tr>
+      <tr>
+        <td>${med.name}</td>
+        <td>${qty}</td>
+        <td>${med.sell}</td>
+        <td>${discount}</td>
+        <td>${(total-discountAmount).toFixed(2)}</td>
+        <td>${profit.toFixed(2)}</td>
+      </tr>
+    </table>
+    <div class="footer">
+      <p>Total Amount: ₹${(total-discountAmount).toFixed(2)}</p>
+      <p>Profit: ₹${profit.toFixed(2)} | Discount: ${discount}%</p>
+      <p>Digitally Signed by ${settings.pharmaName}</p>
+    </div>
+  </body>
+  </html>
+  `;
+
+  let w = window.open('', '_blank');
+  w.document.write(billContent);
+  w.document.close();
+  w.focus();
+  w.print();  // Mobile + Desktop friendly print / PDF preview
+}
 ${settings.storeName}
 Pharmacist: ${settings.pharmaName}
 Phone: ${settings.phone}
