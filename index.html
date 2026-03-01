@@ -319,3 +319,184 @@ function saveSettings(){
 
 </body>
 </html>
+<!-- CUSTOMER + MULTI-MEDICINE BILL MODULE -->
+<div id="customerModule" class="hidden">
+
+  <input id="searchCustomer" type="text" placeholder="Search by Name / Phone / UID" class="p-2 rounded w-full mb-2 text-black" onkeyup="searchCustomer()">
+
+  <div id="customerList" class="space-y-2"></div>
+
+  <!-- Customer Profile Template -->
+  <div id="customerProfileTemplate" class="hidden bg-slate-700 p-4 rounded-lg shadow space-y-2">
+    <h2 class="text-xl font-bold">Customer: <span id="custName"></span> (UID: <span id="custUID"></span>)</h2>
+    <p>Phone: <span id="custPhone"></span> | Address: <span id="custAddress"></span> | DOB: <span id="custDOB"></span></p>
+    <p>Referred By: <span id="custReferred"></span></p>
+
+    <!-- Medicine Given / Diagnosis -->
+    <div class="space-y-2">
+      <h3 class="font-bold">Add Medicines / Diagnosis</h3>
+      <select id="multiBillMedicine" class="w-full p-2 rounded mb-2 text-black"></select>
+      <input id="multiBillQty" type="number" placeholder="Quantity" class="w-full p-2 rounded mb-2 text-black">
+      <input id="multiBillDiscount" type="number" placeholder="Discount %" class="w-full p-2 rounded mb-2 text-black">
+      <input id="multiBillDiag" type="text" placeholder="Diagnosis / Advice" class="w-full p-2 rounded mb-2 text-black">
+      <button onclick="addMedicineToCustomer()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Add to Customer Profile</button>
+    </div>
+
+    <!-- Customer Billing History -->
+    <div class="overflow-auto">
+      <h3 class="font-bold mt-2">Billing History</h3>
+      <table class="w-full text-center border-collapse" id="customerBillTable">
+        <thead class="table-header">
+          <tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="printCustomerBill()" class="w-full p-2 bg-green-600 rounded hover:bg-green-800 mt-2">Print Bill</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ----- CUSTOMER UID + PROFILE MODULE -----
+function generateUID() {
+  let last = customers.length ? customers[customers.length-1].uid : 0;
+  return ("0000"+(Number(last)+1)).slice(-5);
+}
+
+// Add Customer with UID
+function addCustomerPro(){
+  let uid = generateUID();
+  let cObj = {
+    uid: uid,
+    name: cName.value,
+    phone: cPhone.value,
+    address: cAddress.value,
+    dob: cDOB.value,
+    referred: cReferred.value,
+    history: [] // store medicines & billing
+  };
+  customers.push(cObj);
+  localStorage.setItem("customers",JSON.stringify(customers));
+  loadCustomerModule();
+}
+
+// Load Customer List
+function loadCustomerModule(){
+  customerList.innerHTML="";
+  customers.forEach((c,i)=>{
+    let div = document.createElement("div");
+    div.className="bg-slate-700 p-2 rounded cursor-pointer hover:bg-slate-600";
+    div.innerText=`${c.uid} - ${c.name} | ${c.phone}`;
+    div.onclick=()=>openCustomerProfile(i);
+    customerList.appendChild(div);
+  });
+
+  // Populate medicine select
+  multiBillMedicine.innerHTML="<option value=''>Select Medicine</option>";
+  medicines.forEach((m,i)=>{multiBillMedicine.innerHTML+=`<option value='${i}'>${m.name}</option>`;});
+}
+
+// Search Customer
+function searchCustomer(){
+  let val = searchCustomer.value.toLowerCase();
+  customerList.innerHTML="";
+  customers.forEach((c,i)=>{
+    if(c.name.toLowerCase().includes(val) || c.phone.includes(val) || c.uid.includes(val)){
+      let div = document.createElement("div");
+      div.className="bg-slate-700 p-2 rounded cursor-pointer hover:bg-slate-600";
+      div.innerText=`${c.uid} - ${c.name} | ${c.phone}`;
+      div.onclick=()=>openCustomerProfile(i);
+      customerList.appendChild(div);
+    }
+  });
+}
+
+// Open Customer Profile
+let activeCustomerIndex=null;
+function openCustomerProfile(i){
+  activeCustomerIndex=i;
+  let c=customers[i];
+  document.getElementById("custName").innerText=c.name;
+  document.getElementById("custUID").innerText=c.uid;
+  document.getElementById("custPhone").innerText=c.phone;
+  document.getElementById("custAddress").innerText=c.address;
+  document.getElementById("custDOB").innerText=c.dob;
+  document.getElementById("custReferred").innerText=c.referred;
+  loadCustomerBillTable();
+  customerProfileTemplate.style.display="block";
+}
+
+// Add Medicine to Customer
+function addMedicineToCustomer(){
+  if(activeCustomerIndex===null) { alert("Select Customer"); return; }
+  let medIndex=multiBillMedicine.value;
+  let qty=multiBillQty.value;
+  let discount=multiBillDiscount.value||0;
+  let diag=multiBillDiag.value||"";
+  if(medIndex===""){ alert("Select Medicine"); return; }
+
+  let med=medicines[medIndex];
+  let total=med.sell*qty;
+  let discountAmount=total*(discount/100);
+  let entry = {
+    name: med.name,
+    qty: qty,
+    sell: med.sell,
+    discount: discount,
+    total: (total-discountAmount).toFixed(2),
+    diag: diag
+  };
+
+  customers[activeCustomerIndex].history.push(entry);
+  localStorage.setItem("customers",JSON.stringify(customers));
+  loadCustomerBillTable();
+  alert(`Added ${med.name} to ${customers[activeCustomerIndex].name}`);
+}
+
+// Load Customer Bill Table
+function loadCustomerBillTable(){
+  let c = customers[activeCustomerIndex];
+  let tbody = customerBillTable.querySelector("tbody");
+  tbody.innerHTML="";
+  c.history.forEach(h=>{
+    tbody.innerHTML+=`<tr><td>${h.name}</td><td>${h.qty}</td><td>${h.sell}</td><td>${h.discount}</td><td>${h.total}</td></tr>`;
+  });
+}
+
+// Print Customer Bill
+function printCustomerBill(){
+  let c = customers[activeCustomerIndex];
+  let billRows = c.history.map(h=>`<tr><td>${h.name}</td><td>${h.qty}</td><td>${h.sell}</td><td>${h.discount}</td><td>${h.total}</td></tr>`).join("");
+  let totalAmount = c.history.reduce((sum,h)=>sum+Number(h.total),0);
+
+  let billContent = `
+  <html>
+  <head><title>Bill</title>
+  <style>body{font-family:Segoe UI;padding:20px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #000;padding:5px;text-align:center;}</style>
+  </head>
+  <body>
+    <h1>${settings.storeName}</h1>
+    <h2>Pharmacist: ${settings.pharmaName}</h2>
+    <p>Phone: ${settings.phone} | Email: ${settings.email} | Address: ${settings.address}</p>
+    <hr>
+    <p>Customer: ${c.name} | UID: ${c.uid} | Phone: ${c.phone}</p>
+    <p>Address: ${c.address} | DOB: ${c.dob}</p>
+    <table>
+      <thead><tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th></tr></thead>
+      <tbody>${billRows}</tbody>
+    </table>
+    <div style="margin-top:20px;text-align:center;">
+      <p>Total Amount: ₹${totalAmount.toFixed(2)}</p>
+      <p>Digitally Signed by ${settings.pharmaName}</p>
+    </div>
+  </body>
+  </html>
+  `;
+
+  let w = window.open('', '_blank');
+  w.document.write(billContent);
+  w.document.close();
+  w.focus();
+  w.print();
+}
+</script>
