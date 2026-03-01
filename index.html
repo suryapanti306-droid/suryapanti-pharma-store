@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Suryapanti Pharma Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<h2>Suryapanti Pharma Store</h2>
+
+<h3>Login</h3>
+
+<input type="email" id="email" placeholder="Enter Email"><br><br>
+<input type="password" id="password" placeholder="Enter Password"><br><br>
+
+<button onclick="login()">Login</button>
+
+<hr>
+
+<h3>Add Medicine</h3>
+
+<input type="text" id="medicineName" placeholder="Medicine Name"><br><br>
+<input type="number" id="price" placeholder="Price"><br><br>
+
+<button onclick="addMedicine()">Add Medicine</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDpV_nRiRt2cToNGaFW1bi55hsb-7p6Ig8",
+  authDomain: "suryapanti-pharma-store.firebaseapp.com",
+  projectId: "suryapanti-pharma-store",
+  storageBucket: "suryapanti-pharma-store.firebasestorage.app",
+  messagingSenderId: "960716528234",
+  appId: "1:960716528234:web:0d1968b04794a49bbb8813"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.login = function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => alert("Login Successful"))
+    .catch(err => alert(err.message));
+}
+
+window.addMedicine = async function() {
+  const name = document.getElementById("medicineName").value;
+  const price = document.getElementById("price").value;
+
+  await addDoc(collection(db, "medicines"), {
+    name: name,
+    price: price,
+    createdAt: new Date()
+  });
+
+  alert("Medicine Added");
+}
+
+</script>
+
+</body>
+</html>
