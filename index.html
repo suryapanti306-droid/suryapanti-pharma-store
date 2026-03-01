@@ -4,257 +4,237 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Suryapanti Pharma Store</title>
 
+<!-- Tailwind CDN for professional theme -->
+<script src="https://cdn.tailwindcss.com"></script>
+
 <style>
-body{
-margin:0;
-font-family:Segoe UI;
-background:#0f172a;
-color:white;
+body {font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white;}
+/* Background medical illustration */
+body::before {
+  content: '';
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: url('https://i.ibb.co/3pS8C2X/medical-bg.png') center/cover no-repeat;
+  opacity:0.05;
+  z-index: -1;
 }
 
-.login-page{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-background:linear-gradient(135deg,#1e293b,#0f172a);
-}
-
-.login-box{
-background:#1e293b;
-padding:30px;
-border-radius:10px;
-width:300px;
-box-shadow:0 0 20px rgba(0,0,0,0.5);
-}
-
-input{
-width:100%;
-padding:10px;
-margin:8px 0;
-border:none;
-border-radius:5px;
-}
-
-button{
-width:100%;
-padding:10px;
-background:#3b82f6;
-border:none;
-color:white;
-border-radius:5px;
-cursor:pointer;
-}
-
-.dashboard{
-display:none;
-}
-
-.sidebar{
-width:220px;
-background:#1e293b;
-height:100vh;
-position:fixed;
-padding-top:20px;
-}
-
-.sidebar h2{
-text-align:center;
-}
-
-.sidebar button{
-width:90%;
-margin:10px;
-background:#334155;
-}
-
-.content{
-margin-left:220px;
-padding:20px;
-}
-
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-border:1px solid #334155;
-padding:8px;
-text-align:center;
-}
-
-@media(max-width:768px){
-.sidebar{
-position:relative;
-width:100%;
-height:auto;
-}
-.content{
-margin-left:0;
-}
-}
+.sidebar-btn:hover {background:#1e293b;}
+.table-header {background:#1e293b;}
 </style>
 </head>
-
 <body>
 
 <!-- LOGIN PAGE -->
-<div class="login-page" id="loginPage">
-<div class="login-box">
-<h2>Login</h2>
-<input type="text" id="user" placeholder="Username">
-<input type="password" id="pass" placeholder="Password">
-<button onclick="login()">Login</button>
-</div>
+<div id="loginPage" class="flex items-center justify-center h-screen bg-gradient-to-tr from-slate-800 to-slate-900">
+  <div class="bg-slate-700 p-8 rounded-lg shadow-lg w-80">
+    <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+    <input id="user" type="text" placeholder="Username" class="w-full p-2 rounded mb-2 text-black">
+    <input id="pass" type="password" placeholder="Password" class="w-full p-2 rounded mb-4 text-black">
+    <button onclick="login()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Login</button>
+  </div>
 </div>
 
 <!-- DASHBOARD -->
-<div class="dashboard" id="dashboard">
+<div id="dashboard" class="hidden flex min-h-screen">
 
-<div class="sidebar">
-<h2>Pharma</h2>
-<button onclick="showPage('home')">Dashboard</button>
-<button onclick="showPage('medicine')">Medicines</button>
-<button onclick="showPage('customer')">Customers</button>
-<button onclick="showPage('billing')">Billing</button>
-<button onclick="logout()">Logout</button>
-</div>
+  <!-- Sidebar -->
+  <div class="w-56 bg-slate-800 p-4 flex flex-col">
+    <h2 class="text-center text-xl font-bold mb-6">Pharma Store</h2>
+    <button onclick="showPage('home')" class="sidebar-btn p-2 mb-2 rounded">Dashboard</button>
+    <button onclick="showPage('medicine')" class="sidebar-btn p-2 mb-2 rounded">Medicines</button>
+    <button onclick="showPage('customer')" class="sidebar-btn p-2 mb-2 rounded">Customers</button>
+    <button onclick="showPage('billing')" class="sidebar-btn p-2 mb-2 rounded">Billing</button>
+    <button onclick="logout()" class="sidebar-btn p-2 mb-2 rounded bg-red-600 hover:bg-red-800">Logout</button>
+  </div>
 
-<div class="content">
+  <!-- Content -->
+  <div class="flex-1 p-6 space-y-6 overflow-auto">
 
-<div id="home" class="page">
-<div class="card">
-<h3>Welcome Suryapanti</h3>
-<p>Total Medicines: <span id="totalMed"></span></p>
-<p>Total Customers: <span id="totalCust"></span></p>
-<p>Total Profit: ₹ <span id="totalProfit"></span></p>
-</div>
-</div>
+    <!-- Home Page -->
+    <div id="home" class="page">
+      <div class="bg-slate-700 p-4 rounded-lg shadow text-center">
+        <h2 class="text-2xl font-bold mb-4">Welcome Suryapanti</h2>
+        <p>Total Medicines: <span id="totalMed">0</span></p>
+        <p>Total Customers: <span id="totalCust">0</span></p>
+        <p>Total Profit: ₹ <span id="totalProfit">0</span></p>
+      </div>
+    </div>
 
-<div id="medicine" class="page" style="display:none">
-<div class="card">
-<h3>Add Medicine</h3>
-<input type="text" id="mName" placeholder="Medicine Name">
-<input type="number" id="mBuy" placeholder="Buy Price">
-<input type="number" id="mSell" placeholder="Sell Price">
-<input type="number" id="mQty" placeholder="Quantity">
-<button onclick="addMedicine()">Add</button>
-</div>
+    <!-- Medicines Page -->
+    <div id="medicine" class="page hidden space-y-4">
+      <div class="bg-slate-700 p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Add Medicine</h2>
+        <input id="mName" type="text" placeholder="Medicine Name" class="w-full p-2 rounded mb-2 text-black">
+        <input id="mBuy" type="number" placeholder="Buy Price" class="w-full p-2 rounded mb-2 text-black">
+        <input id="mSell" type="number" placeholder="Sell Price" class="w-full p-2 rounded mb-2 text-black">
+        <input id="mQty" type="number" placeholder="Quantity" class="w-full p-2 rounded mb-2 text-black">
+        <button onclick="addMedicine()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Add Medicine</button>
+      </div>
 
-<div class="card">
-<h3>Medicine List</h3>
-<table id="medTable">
-<tr><th>Name</th><th>Buy</th><th>Sell</th><th>Qty</th></tr>
-</table>
-</div>
-</div>
+      <div class="bg-slate-700 p-4 rounded-lg shadow overflow-auto">
+        <h2 class="text-xl font-bold mb-2">Medicine List</h2>
+        <table class="w-full text-center">
+          <thead class="table-header">
+            <tr>
+              <th class="p-2">Name</th>
+              <th class="p-2">Buy</th>
+              <th class="p-2">Sell</th>
+              <th class="p-2">Qty</th>
+            </tr>
+          </thead>
+          <tbody id="medTable"></tbody>
+        </table>
+      </div>
+    </div>
 
-<div id="customer" class="page" style="display:none">
-<div class="card">
-<h3>Add Customer</h3>
-<input type="text" id="cName" placeholder="Customer Name">
-<input type="text" id="cPhone" placeholder="Phone">
-<button onclick="addCustomer()">Add</button>
-</div>
+    <!-- Customers Page -->
+    <div id="customer" class="page hidden space-y-4">
+      <div class="bg-slate-700 p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Add Customer</h2>
+        <input id="cName" type="text" placeholder="Customer Name" class="w-full p-2 rounded mb-2 text-black">
+        <input id="cPhone" type="text" placeholder="Phone" class="w-full p-2 rounded mb-2 text-black">
+        <input id="cAddress" type="text" placeholder="Address" class="w-full p-2 rounded mb-2 text-black">
+        <input id="cDOB" type="date" placeholder="DOB" class="w-full p-2 rounded mb-2 text-black">
+        <input id="cReferred" type="text" placeholder="Referred By" class="w-full p-2 rounded mb-2 text-black">
+        <button onclick="addCustomer()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Add Customer</button>
+      </div>
 
-<div class="card">
-<h3>Customer List</h3>
-<table id="custTable">
-<tr><th>Name</th><th>Phone</th></tr>
-</table>
-</div>
-</div>
+      <div class="bg-slate-700 p-4 rounded-lg shadow overflow-auto">
+        <h2 class="text-xl font-bold mb-2">Customer List</h2>
+        <table class="w-full text-center">
+          <thead class="table-header">
+            <tr>
+              <th class="p-2">Name</th>
+              <th class="p-2">Phone</th>
+              <th class="p-2">Address</th>
+              <th class="p-2">DOB</th>
+              <th class="p-2">Referred By</th>
+            </tr>
+          </thead>
+          <tbody id="custTable"></tbody>
+        </table>
+      </div>
+    </div>
 
-<div id="billing" class="page" style="display:none">
-<div class="card">
-<h3>Billing</h3>
-<input type="number" id="billBuy" placeholder="Buy Price">
-<input type="number" id="billSell" placeholder="Sell Price">
-<button onclick="calculateProfit()">Calculate Profit</button>
-<p>Profit: ₹ <span id="billProfit"></span></p>
-</div>
-</div>
+    <!-- Billing Page -->
+    <div id="billing" class="page hidden space-y-4">
+      <div class="bg-slate-700 p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Billing</h2>
+        <select id="billCustomer" class="w-full p-2 rounded mb-2 text-black"></select>
+        <select id="billMedicine" class="w-full p-2 rounded mb-2 text-black"></select>
+        <input id="billQty" type="number" placeholder="Quantity" class="w-full p-2 rounded mb-2 text-black">
+        <input id="billDiscount" type="number" placeholder="Discount %" class="w-full p-2 rounded mb-2 text-black">
+        <button onclick="generateBill()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Generate Bill</button>
+        <p class="mt-2">Profit: ₹ <span id="billProfit">0</span></p>
+        <p>Pharmacist: <span id="pharmaName">Suryapanti</span></p>
+      </div>
+    </div>
 
-</div>
+  </div>
 </div>
 
 <script>
-let medicines=JSON.parse(localStorage.getItem("medicines"))||[];
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
-let totalProfit=0;
+// Data storage
+let medicines = JSON.parse(localStorage.getItem("medicines"))||[];
+let customers = JSON.parse(localStorage.getItem("customers"))||[];
+let totalProfit = 0;
 
+// Login
 function login(){
-if(user.value==="suryapanti760" && pass.value==="12345678"){
-loginPage.style.display="none";
-dashboard.style.display="block";
-loadData();
-}else{
-alert("Wrong Login");
-}
-}
-
-function logout(){
-location.reload();
+  if(user.value==="suryapanti760" && pass.value==="12345678"){
+    loginPage.style.display="none";
+    dashboard.style.display="flex";
+    loadData();
+  }else{
+    alert("Wrong Login");
+  }
 }
 
+// Logout
+function logout(){ location.reload(); }
+
+// Page switch
 function showPage(page){
-document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-document.getElementById(page).style.display="block";
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(page).classList.remove("hidden");
 }
 
+// Medicines
 function addMedicine(){
-medicines.push({
-name:mName.value,
-buy:Number(mBuy.value),
-sell:Number(mSell.value),
-qty:Number(mQty.value)
-});
-localStorage.setItem("medicines",JSON.stringify(medicines));
-loadData();
+  medicines.push({
+    name:mName.value,
+    buy:Number(mBuy.value),
+    sell:Number(mSell.value),
+    qty:Number(mQty.value)
+  });
+  localStorage.setItem("medicines",JSON.stringify(medicines));
+  loadData();
 }
 
+// Customers
 function addCustomer(){
-customers.push({
-name:cName.value,
-phone:cPhone.value
-});
-localStorage.setItem("customers",JSON.stringify(customers));
-loadData();
+  customers.push({
+    name:cName.value,
+    phone:cPhone.value,
+    address:cAddress.value,
+    dob:cDOB.value,
+    referred:cReferred.value
+  });
+  localStorage.setItem("customers",JSON.stringify(customers));
+  loadData();
 }
 
-function calculateProfit(){
-let buy=Number(billBuy.value);
-let sell=Number(billSell.value);
-let profit=sell-buy;
-totalProfit+=profit;
-billProfit.innerText=profit;
-document.getElementById("totalProfit").innerText=totalProfit;
-}
-
+// Load data
 function loadData(){
-totalMed.innerText=medicines.length;
-totalCust.innerText=customers.length;
+  totalMed.innerText = medicines.length;
+  totalCust.innerText = customers.length;
 
-let medTable=document.getElementById("medTable");
-medTable.innerHTML="<tr><th>Name</th><th>Buy</th><th>Sell</th><th>Qty</th></tr>";
-medicines.forEach(m=>{
-medTable.innerHTML+=`<tr><td>${m.name}</td><td>${m.buy}</td><td>${m.sell}</td><td>${m.qty}</td></tr>`;
-});
+  // Medicine table
+  medTable.innerHTML="";
+  medicines.forEach(m=>{
+    medTable.innerHTML+=`<tr><td>${m.name}</td><td>${m.buy}</td><td>${m.sell}</td><td>${m.qty}</td></tr>`;
+  });
 
-let custTable=document.getElementById("custTable");
-custTable.innerHTML="<tr><th>Name</th><th>Phone</th></tr>";
-customers.forEach(c=>{
-custTable.innerHTML+=`<tr><td>${c.name}</td><td>${c.phone}</td></tr>`;
-});
+  // Customer table
+  custTable.innerHTML="";
+  customers.forEach(c=>{
+    custTable.innerHTML+=`<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.address}</td><td>${c.dob}</td><td>${c.referred}</td></tr>`;
+  });
+
+  // Billing selects
+  billCustomer.innerHTML="<option value=''>Select Customer</option>";
+  customers.forEach((c,i)=>{
+    billCustomer.innerHTML+=`<option value='${i}'>${c.name}</option>`;
+  });
+  billMedicine.innerHTML="<option value=''>Select Medicine</option>";
+  medicines.forEach((m,i)=>{
+    billMedicine.innerHTML+=`<option value='${i}'>${m.name}</option>`;
+  });
 }
+
+// Billing
+function generateBill(){
+  let custIndex=billCustomer.value;
+  let medIndex=billMedicine.value;
+  let qty=billQty.value;
+  let discount=billDiscount.value||0;
+
+  if(custIndex==="" || medIndex===""){ alert("Select Customer & Medicine"); return; }
+
+  let med=medicines[medIndex];
+  let customer=customers[custIndex];
+
+  let total=med.sell*qty;
+  let discountAmount=total*(discount/100);
+  let profit=(med.sell-med.buy)*qty-discountAmount;
+  totalProfit+=profit;
+  billProfit.innerText=profit.toFixed(2);
+  totalProfit && (document.getElementById("totalProfit").innerText=totalProfit.toFixed(2));
+
+  alert(`Bill Generated for ${customer.name}\nMedicine: ${med.name}\nQty: ${qty}\nDiscount: ${discount}%\nProfit: ₹${profit.toFixed(2)}`);
+}
+
 </script>
 
 </body>
