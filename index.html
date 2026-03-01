@@ -9,7 +9,6 @@
 
 <style>
 body {font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white;}
-/* Background medical illustration */
 body::before {
   content: '';
   position: fixed;
@@ -18,9 +17,9 @@ body::before {
   opacity:0.05;
   z-index: -1;
 }
-
 .sidebar-btn:hover {background:#1e293b;}
 .table-header {background:#1e293b;}
+.page {display:none;}
 </style>
 </head>
 <body>
@@ -45,6 +44,7 @@ body::before {
     <button onclick="showPage('medicine')" class="sidebar-btn p-2 mb-2 rounded">Medicines</button>
     <button onclick="showPage('customer')" class="sidebar-btn p-2 mb-2 rounded">Customers</button>
     <button onclick="showPage('billing')" class="sidebar-btn p-2 mb-2 rounded">Billing</button>
+    <button onclick="showPage('settings')" class="sidebar-btn p-2 mb-2 rounded">Settings</button>
     <button onclick="logout()" class="sidebar-btn p-2 mb-2 rounded bg-red-600 hover:bg-red-800">Logout</button>
   </div>
 
@@ -54,7 +54,7 @@ body::before {
     <!-- Home Page -->
     <div id="home" class="page">
       <div class="bg-slate-700 p-4 rounded-lg shadow text-center">
-        <h2 class="text-2xl font-bold mb-4">Welcome Suryapanti</h2>
+        <h2 class="text-2xl font-bold mb-4">Welcome <span id="pharmaNameHome">Suryapanti</span></h2>
         <p>Total Medicines: <span id="totalMed">0</span></p>
         <p>Total Customers: <span id="totalCust">0</span></p>
         <p>Total Profit: ₹ <span id="totalProfit">0</span></p>
@@ -62,7 +62,7 @@ body::before {
     </div>
 
     <!-- Medicines Page -->
-    <div id="medicine" class="page hidden space-y-4">
+    <div id="medicine" class="page space-y-4">
       <div class="bg-slate-700 p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-2">Add Medicine</h2>
         <input id="mName" type="text" placeholder="Medicine Name" class="w-full p-2 rounded mb-2 text-black">
@@ -71,16 +71,12 @@ body::before {
         <input id="mQty" type="number" placeholder="Quantity" class="w-full p-2 rounded mb-2 text-black">
         <button onclick="addMedicine()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Add Medicine</button>
       </div>
-
       <div class="bg-slate-700 p-4 rounded-lg shadow overflow-auto">
         <h2 class="text-xl font-bold mb-2">Medicine List</h2>
         <table class="w-full text-center">
           <thead class="table-header">
             <tr>
-              <th class="p-2">Name</th>
-              <th class="p-2">Buy</th>
-              <th class="p-2">Sell</th>
-              <th class="p-2">Qty</th>
+              <th class="p-2">Name</th><th class="p-2">Buy</th><th class="p-2">Sell</th><th class="p-2">Qty</th>
             </tr>
           </thead>
           <tbody id="medTable"></tbody>
@@ -89,7 +85,7 @@ body::before {
     </div>
 
     <!-- Customers Page -->
-    <div id="customer" class="page hidden space-y-4">
+    <div id="customer" class="page space-y-4">
       <div class="bg-slate-700 p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-2">Add Customer</h2>
         <input id="cName" type="text" placeholder="Customer Name" class="w-full p-2 rounded mb-2 text-black">
@@ -99,17 +95,12 @@ body::before {
         <input id="cReferred" type="text" placeholder="Referred By" class="w-full p-2 rounded mb-2 text-black">
         <button onclick="addCustomer()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Add Customer</button>
       </div>
-
       <div class="bg-slate-700 p-4 rounded-lg shadow overflow-auto">
         <h2 class="text-xl font-bold mb-2">Customer List</h2>
         <table class="w-full text-center">
           <thead class="table-header">
             <tr>
-              <th class="p-2">Name</th>
-              <th class="p-2">Phone</th>
-              <th class="p-2">Address</th>
-              <th class="p-2">DOB</th>
-              <th class="p-2">Referred By</th>
+              <th class="p-2">Name</th><th class="p-2">Phone</th><th class="p-2">Address</th><th class="p-2">DOB</th><th class="p-2">Referred By</th>
             </tr>
           </thead>
           <tbody id="custTable"></tbody>
@@ -118,7 +109,7 @@ body::before {
     </div>
 
     <!-- Billing Page -->
-    <div id="billing" class="page hidden space-y-4">
+    <div id="billing" class="page space-y-4">
       <div class="bg-slate-700 p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-2">Billing</h2>
         <select id="billCustomer" class="w-full p-2 rounded mb-2 text-black"></select>
@@ -126,8 +117,22 @@ body::before {
         <input id="billQty" type="number" placeholder="Quantity" class="w-full p-2 rounded mb-2 text-black">
         <input id="billDiscount" type="number" placeholder="Discount %" class="w-full p-2 rounded mb-2 text-black">
         <button onclick="generateBill()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Generate Bill</button>
+        <button onclick="printBill()" class="w-full p-2 bg-green-600 rounded hover:bg-green-800 mt-2">Print Bill</button>
         <p class="mt-2">Profit: ₹ <span id="billProfit">0</span></p>
-        <p>Pharmacist: <span id="pharmaName">Suryapanti</span></p>
+        <p>Pharmacist: <span id="pharmaName">Saurabh Ray</span></p>
+      </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="settings" class="page space-y-4">
+      <div class="bg-slate-700 p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Store & Admin Settings</h2>
+        <input id="setStoreName" type="text" placeholder="Store Name" class="w-full p-2 rounded mb-2 text-black" value="Suryapanti Pharma Store">
+        <input id="setPharmaName" type="text" placeholder="Pharmacist Name" class="w-full p-2 rounded mb-2 text-black" value="Saurabh Ray">
+        <input id="setPhone" type="text" placeholder="Phone" class="w-full p-2 rounded mb-2 text-black" value="+91-XXXXXXXXXX">
+        <input id="setEmail" type="text" placeholder="Email" class="w-full p-2 rounded mb-2 text-black" value="suryapanti306@gmail.com">
+        <input id="setAddress" type="text" placeholder="Address" class="w-full p-2 rounded mb-2 text-black" value="Store Address Here">
+        <button onclick="saveSettings()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Save Settings</button>
       </div>
     </div>
 
@@ -135,32 +140,38 @@ body::before {
 </div>
 
 <script>
-// Data storage
+// ----- Data -----
 let medicines = JSON.parse(localStorage.getItem("medicines"))||[];
 let customers = JSON.parse(localStorage.getItem("customers"))||[];
+let settings = JSON.parse(localStorage.getItem("settings"))||{
+  storeName:"Suryapanti Pharma Store",
+  pharmaName:"Saurabh Ray",
+  phone:"+91-XXXXXXXXXX",
+  email:"suryapanti306@gmail.com",
+  address:"Store Address Here",
+  username:"suryapanti760",
+  password:"12345678"
+};
 let totalProfit = 0;
 
-// Login
+// ----- LOGIN -----
 function login(){
-  if(user.value==="suryapanti760" && pass.value==="12345678"){
+  if(user.value===settings.username && pass.value===settings.password){
     loginPage.style.display="none";
     dashboard.style.display="flex";
     loadData();
-  }else{
-    alert("Wrong Login");
-  }
+  } else { alert("Wrong Login"); }
 }
 
-// Logout
 function logout(){ location.reload(); }
 
-// Page switch
+// ----- Page Switch -----
 function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-  document.getElementById(page).classList.remove("hidden");
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(page).style.display="block";
 }
 
-// Medicines
+// ----- Medicines -----
 function addMedicine(){
   medicines.push({
     name:mName.value,
@@ -172,7 +183,7 @@ function addMedicine(){
   loadData();
 }
 
-// Customers
+// ----- Customers -----
 function addCustomer(){
   customers.push({
     name:cName.value,
@@ -185,18 +196,19 @@ function addCustomer(){
   loadData();
 }
 
-// Load data
+// ----- Load Data -----
 function loadData(){
   totalMed.innerText = medicines.length;
   totalCust.innerText = customers.length;
+  pharmaNameHome.innerText = settings.pharmaName;
 
-  // Medicine table
+  // Medicines table
   medTable.innerHTML="";
   medicines.forEach(m=>{
     medTable.innerHTML+=`<tr><td>${m.name}</td><td>${m.buy}</td><td>${m.sell}</td><td>${m.qty}</td></tr>`;
   });
 
-  // Customer table
+  // Customers table
   custTable.innerHTML="";
   customers.forEach(c=>{
     custTable.innerHTML+=`<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.address}</td><td>${c.dob}</td><td>${c.referred}</td></tr>`;
@@ -213,7 +225,7 @@ function loadData(){
   });
 }
 
-// Billing
+// ----- Billing -----
 function generateBill(){
   let custIndex=billCustomer.value;
   let medIndex=billMedicine.value;
@@ -230,9 +242,62 @@ function generateBill(){
   let profit=(med.sell-med.buy)*qty-discountAmount;
   totalProfit+=profit;
   billProfit.innerText=profit.toFixed(2);
-  totalProfit && (document.getElementById("totalProfit").innerText=totalProfit.toFixed(2));
 
   alert(`Bill Generated for ${customer.name}\nMedicine: ${med.name}\nQty: ${qty}\nDiscount: ${discount}%\nProfit: ₹${profit.toFixed(2)}`);
+}
+
+// ----- Print Bill -----
+function printBill(){
+  let custIndex=billCustomer.value;
+  let medIndex=billMedicine.value;
+  let qty=billQty.value;
+  let discount=billDiscount.value||0;
+  if(custIndex==="" || medIndex===""){ alert("Select Customer & Medicine"); return; }
+
+  let med=medicines[medIndex];
+  let customer=customers[custIndex];
+
+  let total=med.sell*qty;
+  let discountAmount=total*(discount/100);
+  let profit=(med.sell-med.buy)*qty-discountAmount;
+
+  let billContent=`<pre>
+${settings.storeName}
+Pharmacist: ${settings.pharmaName}
+Phone: ${settings.phone}
+Email: ${settings.email}
+Address: ${settings.address}
+-------------------------------------
+Customer: ${customer.name}  Phone: ${customer.phone}
+Address: ${customer.address}  DOB: ${customer.dob}
+Referred By: ${customer.referred}
+-------------------------------------
+Medicine Name  Qty  Price/Unit  Discount%  Total  Profit
+${med.name}         ${qty}    ${med.sell}       ${discount}        ${(med.sell*qty-discountAmount).toFixed(2)}   ${profit.toFixed(2)}
+-------------------------------------
+Total Amount: ₹${(med.sell*qty-discountAmount).toFixed(2)}
+Profit: ₹${profit.toFixed(2)}
+Discount Applied: ${discount}%
+Digitally Signed by ${settings.pharmaName}
+</pre>`;
+
+  let w = window.open();
+  w.document.write(billContent);
+  w.print();
+  w.close();
+}
+
+// ----- Settings -----
+function saveSettings(){
+  settings.storeName = setStoreName.value;
+  settings.pharmaName = setPharmaName.value;
+  settings.phone = setPhone.value;
+  settings.email = setEmail.value;
+  settings.address = setAddress.value;
+
+  localStorage.setItem("settings",JSON.stringify(settings));
+  alert("Settings saved!");
+  loadData();
 }
 
 </script>
