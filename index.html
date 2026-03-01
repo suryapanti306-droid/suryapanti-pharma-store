@@ -118,8 +118,6 @@ body::before {
         <input id="billDiscount" type="number" placeholder="Discount %" class="w-full p-2 rounded mb-2 text-black">
         <button onclick="generateBill()" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-800">Generate Bill</button>
         <button onclick="printBill()" class="w-full p-2 bg-green-600 rounded hover:bg-green-800 mt-2">Print Bill</button>
-        <p class="mt-2">Profit: ₹ <span id="billProfit">0</span></p>
-        <p>Pharmacist: <span id="pharmaName">Saurabh Ray</span></p>
       </div>
     </div>
 
@@ -241,12 +239,11 @@ function generateBill(){
   let discountAmount=total*(discount/100);
   let profit=(med.sell-med.buy)*qty-discountAmount;
   totalProfit+=profit;
-  billProfit.innerText=profit.toFixed(2);
 
-  alert(`Bill Generated for ${customer.name}\nMedicine: ${med.name}\nQty: ${qty}\nDiscount: ${discount}%\nProfit: ₹${profit.toFixed(2)}`);
+  alert(`Bill Generated for ${customer.name}\nMedicine: ${med.name}\nQty: ${qty}\nDiscount: ${discount}%`);
 }
 
-// ----- Print Bill -----
+// ----- Print Bill (Profit hidden) -----
 function printBill(){
   let custIndex=billCustomer.value;
   let medIndex=billMedicine.value;
@@ -258,7 +255,6 @@ function printBill(){
   let customer=customers[custIndex];
   let total=med.sell*qty;
   let discountAmount=total*(discount/100);
-  let profit=(med.sell-med.buy)*qty-discountAmount;
 
   let billContent = `
   <html>
@@ -281,19 +277,18 @@ function printBill(){
     <p>Address: ${customer.address} | DOB: ${customer.dob}</p>
     <p>Referred By: ${customer.referred}</p>
     <table>
-      <tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th><th>Profit</th></tr>
+      <tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th></tr>
       <tr>
         <td>${med.name}</td>
         <td>${qty}</td>
         <td>${med.sell}</td>
         <td>${discount}</td>
         <td>${(total-discountAmount).toFixed(2)}</td>
-        <td>${profit.toFixed(2)}</td>
       </tr>
     </table>
     <div class="footer">
       <p>Total Amount: ₹${(total-discountAmount).toFixed(2)}</p>
-      <p>Profit: ₹${profit.toFixed(2)} | Discount: ${discount}%</p>
+      <p>Discount Applied: ${discount}%</p>
       <p>Digitally Signed by ${settings.pharmaName}</p>
     </div>
   </body>
@@ -304,31 +299,7 @@ function printBill(){
   w.document.write(billContent);
   w.document.close();
   w.focus();
-  w.print();  // Mobile + Desktop friendly print / PDF preview
-}
-${settings.storeName}
-Pharmacist: ${settings.pharmaName}
-Phone: ${settings.phone}
-Email: ${settings.email}
-Address: ${settings.address}
--------------------------------------
-Customer: ${customer.name}  Phone: ${customer.phone}
-Address: ${customer.address}  DOB: ${customer.dob}
-Referred By: ${customer.referred}
--------------------------------------
-Medicine Name  Qty  Price/Unit  Discount%  Total  Profit
-${med.name}         ${qty}    ${med.sell}       ${discount}        ${(med.sell*qty-discountAmount).toFixed(2)}   ${profit.toFixed(2)}
--------------------------------------
-Total Amount: ₹${(med.sell*qty-discountAmount).toFixed(2)}
-Profit: ₹${profit.toFixed(2)}
-Discount Applied: ${discount}%
-Digitally Signed by ${settings.pharmaName}
-</pre>`;
-
-  let w = window.open();
-  w.document.write(billContent);
   w.print();
-  w.close();
 }
 
 // ----- Settings -----
