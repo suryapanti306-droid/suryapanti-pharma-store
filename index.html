@@ -3,191 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suryapanti Pharma Store</title>
+<title>Saurabh Pharmacy & Clinic</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-body{font-family:Segoe UI; background:#111; color:#fff; margin:0; padding:0;}
-.container{max-width:1200px;margin:auto;padding:20px;}
-button{cursor:pointer;}
-table{width:100%; border-collapse:collapse; margin-top:10px;}
-th,td{border:1px solid #fff; padding:5px; text-align:center;}
-input, select{padding:5px; margin:2px 0; width:100%; border-radius:5px;}
-.hidden{display:none;}
-.bg-slate-700{background:#333;}
-.bg-blue-600{background:#1E90FF;}
-.bg-green-600{background:#22C55E;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    height:100vh;
+    background: linear-gradient(135deg,#0f766e,#115e59);
+    display:flex;
+    flex-direction:column;
+}
+
+/* Top Header */
+.top-bar{
+    height:60px;
+    background:rgba(0,0,0,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    color:#fff;
+    font-size:14px;
+}
+
+.top-bar .right{
+    display:flex;
+    gap:20px;
+}
+
+/* Center Container */
+.main-container{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Glass Card */
+.login-card{
+    width:400px;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(15px);
+    border-radius:15px;
+    padding:40px 30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    color:#fff;
+}
+
+.login-card h2{
+    text-align:center;
+    margin-bottom:25px;
+    font-weight:600;
+}
+
+.input-group{
+    margin-bottom:15px;
+}
+
+.input-group label{
+    font-size:13px;
+}
+
+.input-group input{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    border-radius:8px;
+    border:none;
+    outline:none;
+}
+
+.login-btn{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    background:#22c55e;
+    border:none;
+    border-radius:8px;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.login-btn:hover{
+    background:#16a34a;
+}
+
+.forgot{
+    text-align:center;
+    margin-top:15px;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.logo-title{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:18px;
+    font-weight:600;
+}
+
 </style>
 </head>
+
 <body>
-<div class="container">
 
-<h1>Suryapanti Pharma Store</h1>
-
-<!-- LOGIN -->
-<div id="loginSection">
-  <input type="text" id="adminUser" placeholder="Username" />
-  <input type="password" id="adminPass" placeholder="Password" />
-  <button onclick="login()">Login</button>
+<div class="top-bar">
+    <div>Saurabh Pharmacy & Clinic</div>
+    <div class="right">
+        <div>System Status: Active</div>
+        <div>Support</div>
+    </div>
 </div>
 
-<!-- ADMIN DASHBOARD -->
-<div id="dashboard" class="hidden">
-  <h2>Admin Dashboard</h2>
-  
-  <!-- Medicine Inventory -->
-  <h3>Medicine Inventory</h3>
-  <input type="text" id="medName" placeholder="Medicine Name" />
-  <input type="number" id="medQty" placeholder="Quantity" />
-  <input type="number" id="medBuy" placeholder="Purchase Price" />
-  <input type="number" id="medSell" placeholder="Sell Price" />
-  <input type="date" id="medExpiry" placeholder="Expiry Date" />
-  <button onclick="addMedicine()">Add Medicine</button>
-  
-  <table id="medicineTable">
-    <thead><tr><th>Name</th><th>Qty</th><th>Buy</th><th>Sell</th><th>Expiry</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  
-  <!-- Customer Module -->
-  <h3>Customer Module</h3>
-  <input type="text" id="cName" placeholder="Name" />
-  <input type="text" id="cPhone" placeholder="Phone" />
-  <input type="text" id="cAddress" placeholder="Address" />
-  <input type="date" id="cDOB" placeholder="DOB" />
-  <input type="text" id="cReferred" placeholder="Referred By" />
-  <button onclick="addCustomerPro()">Add Customer</button>
-  
-  <input type="text" id="searchCustomer" placeholder="Search Customer Name/Phone/UID" onkeyup="searchCustomer()" />
-  <div id="customerList"></div>
-  
-  <!-- Customer Profile Template -->
-  <div id="customerProfileTemplate" class="hidden bg-slate-700 p-4 rounded-lg shadow">
-    <h2>Customer: <span id="custName"></span> (UID: <span id="custUID"></span>)</h2>
-    <p>Phone: <span id="custPhone"></span> | Address: <span id="custAddress"></span> | DOB: <span id="custDOB"></span></p>
-    <p>Referred By: <span id="custReferred"></span></p>
+<div class="main-container">
 
-    <h3>Add Medicine / Diagnosis</h3>
-    <select id="multiBillMedicine"></select>
-    <input type="number" id="multiBillQty" placeholder="Quantity" />
-    <input type="number" id="multiBillDiscount" placeholder="Discount %" />
-    <input type="text" id="multiBillDiag" placeholder="Diagnosis / Advice" />
-    <button onclick="addMedicineToCustomer()">Add to Customer Profile</button>
+    <div class="login-card">
 
-    <h3>Billing History</h3>
-    <table id="customerBillTable">
-      <thead><tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <button onclick="printCustomerBill()">Print Bill</button>
-  </div>
+        <div class="logo-title">
+            ADMIN PORTAL LOGIN
+        </div>
+
+        <div class="input-group">
+            <label>Admin Username / Email</label>
+            <input type="text" id="username">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password">
+        </div>
+
+        <div class="input-group">
+            <label>Enter OTP (Optional)</label>
+            <input type="text" id="otp">
+        </div>
+
+        <button class="login-btn" onclick="login()">SECURE LOGIN</button>
+
+        <div class="forgot">Forgot Password?</div>
+
+    </div>
+
 </div>
 
 <script>
-// ----- LOGIN -----
-const adminU="suryapanti760", adminP="12345678";
 function login(){
-  let u=document.getElementById("adminUser").value;
-  let p=document.getElementById("adminPass").value;
-  if(u===adminU && p===adminP){document.getElementById("loginSection").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden"); loadMedicineTable(); loadCustomerModule(); } else{ alert("Wrong Login"); }
-}
+    let user = document.getElementById("username").value;
+    let pass = document.getElementById("password").value;
 
-// ----- DATA ARRAYS -----
-let medicines=JSON.parse(localStorage.getItem("medicines"))||[];
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
-
-// ----- MEDICINE MODULE -----
-function addMedicine(){
-  let mName=document.getElementById("medName").value;
-  let mQty=Number(document.getElementById("medQty").value);
-  let mBuy=Number(document.getElementById("medBuy").value);
-  let mSell=Number(document.getElementById("medSell").value);
-  let mExp=document.getElementById("medExpiry").value;
-  if(!mName||!mQty||!mBuy||!mSell||!mExp){ alert("Fill All"); return; }
-  medicines.push({name:mName, qty:mQty, buy:mBuy, sell:mSell, expiry:mExp});
-  localStorage.setItem("medicines",JSON.stringify(medicines));
-  loadMedicineTable();
-}
-function loadMedicineTable(){
-  let tbody=document.querySelector("#medicineTable tbody"); tbody.innerHTML="";
-  medicines.forEach((m,i)=>{ tbody.innerHTML+=`<tr><td>${m.name}</td><td>${m.qty}</td><td>${m.buy}</td><td>${m.sell}</td><td>${m.expiry}</td></tr>`; });
-}
-
-// ----- CUSTOMER MODULE -----
-function generateUID(){ let last=customers.length?customers[customers.length-1].uid:0; return ("0000"+(Number(last)+1)).slice(-5);}
-function addCustomerPro(){
-  let uid=generateUID();
-  let cObj={uid:uid,name:document.getElementById("cName").value,phone:document.getElementById("cPhone").value,address:document.getElementById("cAddress").value,dob:document.getElementById("cDOB").value,referred:document.getElementById("cReferred").value,history:[]};
-  customers.push(cObj); localStorage.setItem("customers",JSON.stringify(customers)); loadCustomerModule();
-}
-function loadCustomerModule(){
-  let list=document.getElementById("customerList"); list.innerHTML="";
-  customers.forEach((c,i)=>{
-    let div=document.createElement("div"); div.className="bg-slate-700 p-2 rounded cursor-pointer mb-1"; div.innerText=`${c.uid} - ${c.name} | ${c.phone}`;
-    div.onclick=()=>openCustomerProfile(i); list.appendChild(div);
-  });
-  let sel=document.getElementById("multiBillMedicine"); sel.innerHTML="<option value=''>Select Medicine</option>";
-  medicines.forEach((m,i)=>{ sel.innerHTML+=`<option value='${i}'>${m.name}</option>`; });
-}
-function searchCustomer(){
-  let val=document.getElementById("searchCustomer").value.toLowerCase();
-  let list=document.getElementById("customerList"); list.innerHTML="";
-  customers.forEach((c,i)=>{ if(c.name.toLowerCase().includes(val)||c.phone.includes(val)||c.uid.includes(val)){ let div=document.createElement("div"); div.className="bg-slate-700 p-2 rounded cursor-pointer mb-1"; div.innerText=`${c.uid} - ${c.name} | ${c.phone}`; div.onclick=()=>openCustomerProfile(i); list.appendChild(div); } });
-}
-
-// ----- CUSTOMER PROFILE -----
-let activeCustomerIndex=null;
-function openCustomerProfile(i){
-  activeCustomerIndex=i; let c=customers[i];
-  document.getElementById("custName").innerText=c.name;
-  document.getElementById("custUID").innerText=c.uid;
-  document.getElementById("custPhone").innerText=c.phone;
-  document.getElementById("custAddress").innerText=c.address;
-  document.getElementById("custDOB").innerText=c.dob;
-  document.getElementById("custReferred").innerText=c.referred;
-  document.getElementById("customerProfileTemplate").style.display="block"; loadCustomerBillTable();
-}
-
-// Add Medicine to Customer & Reduce Stock
-function addMedicineToCustomer(){
-  if(activeCustomerIndex===null){alert("Select Customer");return;}
-  let medIndex=document.getElementById("multiBillMedicine").value;
-  let qty=Number(document.getElementById("multiBillQty").value);
-  let discount=Number(document.getElementById("multiBillDiscount").value)||0;
-  let diag=document.getElementById("multiBillDiag").value||"";
-  if(medIndex===""){alert("Select Medicine");return;}
-  let med=medicines[medIndex];
-  if(qty>med.qty){alert("Not enough stock"); return;}
-  med.qty-=qty; localStorage.setItem("medicines",JSON.stringify(medicines)); loadMedicineTable();
-  
-  let total=med.sell*qty; let discountAmount=total*(discount/100);
-  let entry={name:med.name, qty:qty, sell:med.sell, discount:discount, total:(total-discountAmount).toFixed(2), diag:diag};
-  customers[activeCustomerIndex].history.push(entry);
-  localStorage.setItem("customers",JSON.stringify(customers));
-  loadCustomerBillTable();
-  alert(`Added ${med.name} to ${customers[activeCustomerIndex].name}`);
-}
-function loadCustomerBillTable(){
-  if(activeCustomerIndex===null)return;
-  let c=customers[activeCustomerIndex]; let tbody=document.querySelector("#customerBillTable tbody"); tbody.innerHTML="";
-  c.history.forEach(h=>{ tbody.innerHTML+=`<tr><td>${h.name}</td><td>${h.qty}</td><td>${h.sell}</td><td>${h.discount}</td><td>${h.total}</td></tr>`; });
-}
-function printCustomerBill(){
-  if(activeCustomerIndex===null){alert("Select Customer");return;}
-  let c=customers[activeCustomerIndex]; let billRows=c.history.map(h=>`<tr><td>${h.name}</td><td>${h.qty}</td><td>${h.sell}</td><td>${h.discount}</td><td>${h.total}</td></tr>`).join("");
-  let totalAmount=c.history.reduce((sum,h)=>sum+Number(h.total),0);
-  let billContent=`<html><head><title>Bill</title><style>body{font-family:Segoe UI;padding:20px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #000;padding:5px;text-align:center;}</style></head><body>
-  <h1>Suryapanti Pharma Store</h1>
-  <h2>Pharmacist: Saurabh Ray</h2>
-  <p>Phone: 1234567890 | Email: suryapanti306@gmail.com | Address: Lucknow, UP, India</p>
-  <hr>
-  <p>Customer: ${c.name} | UID: ${c.uid} | Phone: ${c.phone}</p>
-  <p>Address: ${c.address} | DOB: ${c.dob}</p>
-  <table><thead><tr><th>Medicine</th><th>Qty</th><th>Price/Unit</th><th>Discount%</th><th>Total</th></tr></thead><tbody>${billRows}</tbody></table>
-  <div style="margin-top:20px;text-align:center;"><p>Total Amount: ₹${totalAmount.toFixed(2)}</p><p>Digitally Signed by Saurabh Ray</p></div>
-  </body></html>`;
-  let w=window.open('','_blank'); w.document.write(billContent); w.document.close(); w.focus(); w.print();
+    if(user === "admin" && pass === "1234"){
+        alert("Login Successful");
+    }else{
+        alert("Invalid Credentials");
+    }
 }
 </script>
-</div>
+
 </body>
 </html>
