@@ -9,107 +9,139 @@
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
 }
 
+/* BODY */
 body{
-    height:100vh;
-    background: linear-gradient(135deg,#0f766e,#115e59);
-    display:flex;
-    flex-direction:column;
+height:100vh;
+background:linear-gradient(135deg,#0f766e,#115e59);
 }
 
-/* Top Header */
+/* LOGIN SCREEN */
+#loginPage{
+height:100vh;
+display:flex;
+flex-direction:column;
+}
+
 .top-bar{
-    height:60px;
-    background:rgba(0,0,0,0.25);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 30px;
-    color:#fff;
-    font-size:14px;
+height:60px;
+background:rgba(0,0,0,0.25);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 30px;
+color:#fff;
+font-size:14px;
 }
 
-.top-bar .right{
-    display:flex;
-    gap:20px;
-}
-
-/* Center Container */
 .main-container{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
-/* Glass Card */
 .login-card{
-    width:400px;
-    background:rgba(255,255,255,0.12);
-    backdrop-filter:blur(15px);
-    border-radius:15px;
-    padding:40px 30px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.3);
-    color:#fff;
+width:400px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(15px);
+border-radius:15px;
+padding:40px 30px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+color:#fff;
 }
 
 .login-card h2{
-    text-align:center;
-    margin-bottom:25px;
-    font-weight:600;
+text-align:center;
+margin-bottom:25px;
 }
 
 .input-group{
-    margin-bottom:15px;
-}
-
-.input-group label{
-    font-size:13px;
+margin-bottom:15px;
 }
 
 .input-group input{
-    width:100%;
-    padding:10px;
-    margin-top:5px;
-    border-radius:8px;
-    border:none;
-    outline:none;
+width:100%;
+padding:10px;
+margin-top:5px;
+border-radius:8px;
+border:none;
+outline:none;
 }
 
 .login-btn{
-    width:100%;
-    padding:12px;
-    margin-top:15px;
-    background:#22c55e;
-    border:none;
-    border-radius:8px;
-    color:#fff;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.3s;
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#22c55e;
+border:none;
+border-radius:8px;
+color:#fff;
+font-weight:600;
+cursor:pointer;
 }
 
 .login-btn:hover{
-    background:#16a34a;
+background:#16a34a;
 }
 
-.forgot{
-    text-align:center;
-    margin-top:15px;
-    font-size:13px;
-    cursor:pointer;
+/* DASHBOARD */
+#dashboard{
+display:none;
+height:100vh;
+display:flex;
 }
 
-.logo-title{
-    text-align:center;
-    margin-bottom:10px;
-    font-size:18px;
-    font-weight:600;
+.sidebar{
+width:230px;
+background:#0f3f3d;
+color:#fff;
+padding-top:20px;
+}
+
+.sidebar h3{
+text-align:center;
+margin-bottom:20px;
+}
+
+.menu-item{
+padding:15px 20px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.menu-item:hover{
+background:#115e59;
+}
+
+.main-content{
+flex:1;
+background:#f3f4f6;
+padding:20px;
+}
+
+.header{
+height:60px;
+background:#115e59;
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+margin-bottom:20px;
+border-radius:8px;
+}
+
+.card{
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 </style>
@@ -117,55 +149,82 @@ body{
 
 <body>
 
+<!-- LOGIN PAGE -->
+<div id="loginPage">
 <div class="top-bar">
-    <div>Saurabh Pharmacy & Clinic</div>
-    <div class="right">
-        <div>System Status: Active</div>
-        <div>Support</div>
-    </div>
+<div>Saurabh Pharmacy & Clinic</div>
+<div>System Status: Active</div>
 </div>
 
 <div class="main-container">
+<div class="login-card">
+<h2>ADMIN PORTAL LOGIN</h2>
 
-    <div class="login-card">
+<div class="input-group">
+<label>Username</label>
+<input type="text" id="username">
+</div>
 
-        <div class="logo-title">
-            ADMIN PORTAL LOGIN
-        </div>
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="password">
+</div>
 
-        <div class="input-group">
-            <label>Admin Username / Email</label>
-            <input type="text" id="username">
-        </div>
+<button class="login-btn" onclick="login()">SECURE LOGIN</button>
 
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" id="password">
-        </div>
+</div>
+</div>
+</div>
 
-        <div class="input-group">
-            <label>Enter OTP (Optional)</label>
-            <input type="text" id="otp">
-        </div>
+<!-- DASHBOARD -->
+<div id="dashboard">
 
-        <button class="login-btn" onclick="login()">SECURE LOGIN</button>
+<div class="sidebar">
+<h3>Admin Panel</h3>
+<div class="menu-item" onclick="loadPage('dashboard')">Overall Dashboard</div>
+<div class="menu-item" onclick="loadPage('patients')">Patient Center</div>
+<div class="menu-item">Medication Inventory</div>
+<div class="menu-item">Retail Sales</div>
+<div class="menu-item">Analytics Reports</div>
+<div class="menu-item">System Settings</div>
+</div>
 
-        <div class="forgot">Forgot Password?</div>
+<div class="main-content">
 
-    </div>
+<div class="header">
+<div>Admin Dashboard</div>
+<div>Welcome Admin</div>
+</div>
 
+<div id="contentArea" class="card">
+Dashboard Overview Content
+</div>
+
+</div>
 </div>
 
 <script>
 function login(){
-    let user = document.getElementById("username").value;
-    let pass = document.getElementById("password").value;
+let user=document.getElementById("username").value;
+let pass=document.getElementById("password").value;
 
-    if(user === "admin" && pass === "1234"){
-        alert("Login Successful");
-    }else{
-        alert("Invalid Credentials");
-    }
+if(user==="admin" && pass==="1234"){
+document.getElementById("loginPage").style.display="none";
+document.getElementById("dashboard").style.display="flex";
+}else{
+alert("Invalid Credentials");
+}
+}
+
+function loadPage(page){
+let content=document.getElementById("contentArea");
+
+if(page==="dashboard"){
+content.innerHTML="Dashboard Overview Content";
+}
+if(page==="patients"){
+content.innerHTML="<h2>Patient Center Module (Next Build Phase)</h2>";
+}
 }
 </script>
 
