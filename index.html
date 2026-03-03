@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saurabh Pharmacy & Clinic</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins;}
 body{height:100vh;background:linear-gradient(135deg,#0f766e,#115e59);}
@@ -31,33 +29,30 @@ body{height:100vh;background:linear-gradient(135deg,#0f766e,#115e59);}
 .header{height:60px;background:#115e59;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-radius:8px;margin-bottom:20px;}
 .card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 
-/* PATIENT TABLE */
 table{width:100%;border-collapse:collapse;margin-top:15px;}
-th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;font-size:14px;}
+th,td{padding:10px;border-bottom:1px solid #ddd;font-size:14px;}
 th{background:#f0fdfa;}
-.add-btn{background:#22c55e;color:#fff;padding:8px 15px;border:none;border-radius:6px;cursor:pointer;}
-.add-btn:hover{background:#16a34a;}
-.action-btn{background:#0f766e;color:#fff;padding:5px 10px;border:none;border-radius:5px;font-size:12px;cursor:pointer;}
+button{cursor:pointer;}
 
-/* FORM */
+.btn-green{background:#22c55e;color:#fff;border:none;padding:8px 15px;border-radius:6px;}
+.btn-green:hover{background:#16a34a;}
+.btn-blue{background:#0f766e;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;}
+.btn-gray{background:#ccc;border:none;padding:6px 12px;border-radius:6px;font-size:12px;}
+
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px;}
-.form-grid input,select{padding:8px;border:1px solid #ccc;border-radius:6px;width:100%;}
-.form-actions{margin-top:15px;}
-.save-btn{background:#22c55e;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;}
-.cancel-btn{background:#ccc;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;margin-left:10px;}
+.form-grid input,textarea{padding:8px;border:1px solid #ccc;border-radius:6px;width:100%;}
 .hidden{display:none;}
+.profile-box{background:#f9fafb;padding:15px;border-radius:8px;margin-bottom:15px;}
+.visit-box{background:#f1f5f9;padding:10px;border-radius:6px;margin-bottom:8px;font-size:13px;}
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
 <div id="loginPage">
 <div class="top-bar">
 <div>Saurabh Pharmacy & Clinic</div>
 <div>System Active</div>
 </div>
-
 <div class="main-container">
 <div class="login-card">
 <h2>ADMIN LOGIN</h2>
@@ -74,7 +69,6 @@ th{background:#f0fdfa;}
 </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard">
 <div class="sidebar">
 <h3>Admin Panel</h3>
@@ -87,16 +81,14 @@ th{background:#f0fdfa;}
 <div>Admin Dashboard</div>
 <div>Welcome Admin</div>
 </div>
-
-<div id="contentArea" class="card">
-Dashboard Overview
-</div>
+<div id="contentArea" class="card"></div>
 </div>
 </div>
 
 <script>
 let patients=[];
 let uidCounter=1;
+let currentPatient=null;
 
 function login(){
 let u=document.getElementById("username").value;
@@ -104,106 +96,121 @@ let p=document.getElementById("password").value;
 if(u==="admin" && p==="1234"){
 document.getElementById("loginPage").style.display="none";
 document.getElementById("dashboard").style.display="flex";
+loadPage('patients');
 }else{alert("Invalid Login");}
 }
 
 function loadPage(page){
-let content=document.getElementById("contentArea");
-
 if(page==="dashboard"){
-content.innerHTML="Dashboard Overview";
+document.getElementById("contentArea").innerHTML="Dashboard Overview";
+}
+if(page==="patients"){
+renderPatientList();
+}
 }
 
-if(page==="patients"){
+function renderPatientList(){
+let content=document.getElementById("contentArea");
 content.innerHTML=`
 <h2>Patient Management</h2>
-<button class="add-btn" onclick="showForm()">+ Add New Patient Registration</button>
-
-<div id="patientForm" class="hidden">
-<h3>New Patient Registration</h3>
+<button class="btn-green" onclick="showAddForm()">+ Add New Patient</button>
+<div id="addForm" class="hidden">
 <div class="form-grid">
-<input type="text" id="pFirst" placeholder="First Name">
-<input type="text" id="pLast" placeholder="Last Name">
-<input type="text" id="pPhone" placeholder="Phone">
-<input type="text" id="pEmail" placeholder="Email">
-<select id="pRelation">
-<option value="S/O">Son Of</option>
-<option value="D/O">Daughter Of</option>
-<option value="W/O">Wife Of</option>
-</select>
-<input type="text" id="pGuardian" placeholder="Guardian Name">
-<select id="pGender">
-<option>Male</option>
-<option>Female</option>
-<option>Other</option>
-</select>
-<input type="text" id="pAddress" placeholder="Address">
+<input id="fname" placeholder="First Name">
+<input id="lname" placeholder="Last Name">
+<input id="phone" placeholder="Phone">
+<input id="relation" placeholder="Relation (S/O, D/O, W/O)">
+<input id="guardian" placeholder="Guardian Name">
+<input id="address" placeholder="Address">
+<input id="gender" placeholder="Gender">
 </div>
-<div class="form-actions">
-<button class="save-btn" onclick="savePatient()">Save Patient Profile</button>
-<button class="cancel-btn" onclick="hideForm()">Cancel</button>
+<br>
+<button class="btn-green" onclick="savePatient()">Save</button>
+<button class="btn-gray" onclick="renderPatientList()">Cancel</button>
 </div>
-</div>
-
 <table>
 <thead>
 <tr>
 <th>UID</th>
-<th>Patient Name</th>
+<th>Name</th>
 <th>Relation</th>
-<th>Contact</th>
-<th>Address</th>
+<th>Phone</th>
 <th>Gender</th>
 <th>Action</th>
 </tr>
 </thead>
-<tbody id="patientTable"></tbody>
+<tbody>
+${patients.map(p=>`
+<tr>
+<td><b style="color:#0f766e;cursor:pointer" onclick="openProfile('${p.uid}')">${p.uid}</b></td>
+<td>${p.name}</td>
+<td>${p.relation}</td>
+<td>${p.phone}</td>
+<td>${p.gender}</td>
+<td><button class="btn-blue" onclick="openProfile('${p.uid}')">View</button></td>
+</tr>`).join("")}
+</tbody>
 </table>
 `;
-renderTable();
-}
 }
 
-function showForm(){
-document.getElementById("patientForm").classList.remove("hidden");
-}
-
-function hideForm(){
-document.getElementById("patientForm").classList.add("hidden");
+function showAddForm(){
+document.getElementById("addForm").classList.remove("hidden");
 }
 
 function savePatient(){
 let patient={
 uid:("0000"+uidCounter).slice(-4),
-name:document.getElementById("pFirst").value+" "+document.getElementById("pLast").value,
-relation:document.getElementById("pRelation").value+" "+document.getElementById("pGuardian").value,
-phone:document.getElementById("pPhone").value,
-address:document.getElementById("pAddress").value,
-gender:document.getElementById("pGender").value
+name:fname.value+" "+lname.value,
+relation:relation.value+" "+guardian.value,
+phone:phone.value,
+address:address.value,
+gender:gender.value,
+visits:[]
 };
 patients.push(patient);
 uidCounter++;
-hideForm();
-renderTable();
+renderPatientList();
 }
 
-function renderTable(){
-let table=document.getElementById("patientTable");
-if(!table)return;
-table.innerHTML="";
-patients.forEach(p=>{
-table.innerHTML+=`
-<tr>
-<td>${p.uid}</td>
-<td>${p.name}</td>
-<td>${p.relation}</td>
-<td>${p.phone}</td>
-<td>${p.address}</td>
-<td>${p.gender}</td>
-<td><button class="action-btn">Edit</button></td>
-</tr>
+function openProfile(uid){
+currentPatient=patients.find(p=>p.uid===uid);
+let content=document.getElementById("contentArea");
+content.innerHTML=`
+<button class="btn-gray" onclick="renderPatientList()">← Back</button>
+<h2>Patient Profile (${currentPatient.uid})</h2>
+<div class="profile-box">
+<b>Name:</b> ${currentPatient.name}<br>
+<b>Relation:</b> ${currentPatient.relation}<br>
+<b>Phone:</b> ${currentPatient.phone}<br>
+<b>Address:</b> ${currentPatient.address}<br>
+<b>Gender:</b> ${currentPatient.gender}
+</div>
+
+<h3>Add Medical Record</h3>
+<textarea id="diagnosis" placeholder="Diagnosis"></textarea><br><br>
+<textarea id="advice" placeholder="Advice"></textarea><br><br>
+<button class="btn-green" onclick="addVisit()">Save Visit</button>
+
+<h3 style="margin-top:20px;">Visit History</h3>
+${currentPatient.visits.length===0?"No previous visits":
+currentPatient.visits.map(v=>`
+<div class="visit-box">
+<b>Date:</b> ${v.date}<br>
+<b>Diagnosis:</b> ${v.diagnosis}<br>
+<b>Advice:</b> ${v.advice}
+</div>`).join("")}
 `;
-});
+}
+
+function addVisit(){
+let visit={
+date:new Date().toLocaleDateString(),
+diagnosis:diagnosis.value,
+advice:advice.value
+};
+currentPatient.visits.push(visit);
+openProfile(currentPatient.uid);
 }
 </script>
 
