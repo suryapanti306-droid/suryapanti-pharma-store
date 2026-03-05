@@ -1,74 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Suryapanti Pharma Store</title>
+  <title>Suryapanti Pharma - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <style>
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: Arial, sans-serif;
       background: #f4f6f9;
+    }
+
+    .container {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
     }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      width: 320px;
-      text-align: center;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #2c7be5;
+
+    .sidebar {
+      width: 220px;
+      background: #0f3d3e;
       color: white;
-      border: none;
-      border-radius: 5px;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 15px 0;
       cursor: pointer;
     }
-    button:hover {
-      background: #1a68d1;
+
+    .main {
+      margin-left: 240px;
+      padding: 20px;
+      width: 100%;
     }
-    #dashboard {
-      display: none;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
       text-align: center;
+    }
+
+    th {
+      background: #198754;
+      color: white;
+    }
+
+    input, select {
+      padding: 6px;
+      margin: 5px;
+    }
+
+    .form-box {
+      background: white;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+
+    .logout {
+      background: red;
     }
   </style>
 </head>
+
 <body>
 
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h2>Admin Login</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <p id="error" style="color:red;"></p>
+<div class="container">
+  
+  <div class="sidebar">
+    <h2>Pharma Panel</h2>
+    <a>Overall Dashboard</a>
+    <a>Book Appointments</a>
+    <a><b>Patient Center</b></a>
+    <a>Medication Inventory</a>
+    <a>Retail Sales</a>
+    <a>Analytics Reports</a>
+    <a>System Settings</a>
+  </div>
+
+  <div class="main">
+    
+    <div class="header">
+      <h2>Patient Management</h2>
+      <button class="btn logout" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="form-box">
+      <h3>Add New Patient</h3>
+      <input type="text" id="name" placeholder="Patient Name">
+      <input type="text" id="relation" placeholder="Relation (S/O, D/O)">
+      <input type="text" id="contact" placeholder="Contact">
+      <input type="text" id="address" placeholder="Address">
+      <select id="gender">
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+      <button class="btn" onclick="addPatient()">Add Patient</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>UID</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Name</th>
+          <th>Relation</th>
+          <th>Contact</th>
+          <th>Address</th>
+          <th>Gender</th>
+        </tr>
+      </thead>
+      <tbody id="patientTable"></tbody>
+    </table>
+
+  </div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="card" id="dashboard">
-  <h2>Welcome Admin ✅</h2>
-  <p>Firebase Connected & Login Successful</p>
-  <button onclick="logout()">Logout</button>
-</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-// 🔥 Firebase Config
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDpV_nRiRt2cToNGaFW1bi55hsb-7p6Ig8",
   authDomain: "suryapanti-pharma-store.firebaseapp.com",
@@ -80,36 +166,73 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 
-// LOGIN FUNCTION
-window.login = function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      document.getElementById("error").innerText = "";
-    })
-    .catch((error) => {
-      document.getElementById("error").innerText = "Invalid Email or Password";
-    });
-};
-
-// LOGOUT
-window.logout = function () {
-  signOut(auth);
-};
-
-// AUTO LOGIN CHECK
+// Protect Page
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-  } else {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("dashboard").style.display = "none";
+  if (!user) {
+    window.location.href = "index.html";
   }
+});
+
+// Logout
+window.logout = function() {
+  signOut(auth).then(() => {
+    window.location.href = "index.html";
+  });
+}
+
+// Generate UID
+async function generateUID() {
+  const snapshot = await getDocs(collection(db, "patients"));
+  const count = snapshot.size + 1;
+  return count.toString().padStart(4, "0");
+}
+
+// Add Patient
+window.addPatient = async function () {
+
+  const uid = await generateUID();
+  const now = new Date();
+
+  await addDoc(collection(db, "patients"), {
+    uid: uid,
+    name: document.getElementById("name").value,
+    relation: document.getElementById("relation").value,
+    contact: document.getElementById("contact").value,
+    address: document.getElementById("address").value,
+    gender: document.getElementById("gender").value,
+    createdDate: now.toLocaleDateString(),
+    createdTime: now.toLocaleTimeString(),
+    timestamp: now
+  });
+
+  alert("Patient Added Successfully ✅");
+}
+
+// Real-time Table
+const q = query(collection(db, "patients"), orderBy("timestamp", "desc"));
+
+onSnapshot(q, (snapshot) => {
+  const table = document.getElementById("patientTable");
+  table.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    table.innerHTML += `
+      <tr>
+        <td>${data.uid}</td>
+        <td>${data.createdDate}</td>
+        <td>${data.createdTime}</td>
+        <td>${data.name}</td>
+        <td>${data.relation}</td>
+        <td>${data.contact}</td>
+        <td>${data.address}</td>
+        <td>${data.gender}</td>
+      </tr>
+    `;
+  });
 });
 
 </script>
