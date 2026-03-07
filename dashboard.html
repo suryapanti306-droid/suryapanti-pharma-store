@@ -1,43 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Dashboard</title>
+<title>Pharma Dashboard</title>
 
 <style>
+
 body{
-font-family: Arial;
-background:white;
+font-family:Arial;
+background:#f2f6ff;
 text-align:center;
+margin:0;
 }
 
-h1{
-margin-top:20px;
+header{
+background:#2c3e50;
+color:white;
+padding:15px;
+font-size:22px;
 }
 
 form{
-margin:20px;
+background:white;
+padding:20px;
+margin:20px auto;
+width:90%;
+max-width:500px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 input{
 padding:10px;
 margin:5px;
+width:90%;
+border:1px solid #ccc;
+border-radius:5px;
 }
 
 button{
 padding:10px 20px;
+background:#3498db;
+border:none;
+color:white;
+border-radius:5px;
 cursor:pointer;
 }
 
+button:hover{
+background:#2980b9;
+}
+
 table{
+width:95%;
 margin:auto;
 margin-top:20px;
 border-collapse:collapse;
-width:80%;
+background:white;
 }
 
-th,td{
-border:1px solid black;
+th{
+background:#3498db;
+color:white;
 padding:10px;
+}
+
+td{
+border:1px solid #ddd;
+padding:10px;
+}
+
+tr:nth-child(even){
+background:#f2f2f2;
+}
+
+.logout{
+background:#e74c3c;
+margin:20px;
 }
 
 </style>
@@ -46,7 +84,9 @@ padding:10px;
 
 <body>
 
-<h1>Admin Dashboard</h1>
+<header>
+Suryapanti Pharma Store - Patient Dashboard
+</header>
 
 <h2>Add Patient</h2>
 
@@ -67,13 +107,11 @@ padding:10px;
 <thead>
 
 <tr>
-
 <th>UID</th>
 <th>Name</th>
 <th>Age</th>
 <th>Date</th>
 <th>Time</th>
-
 </tr>
 
 </thead>
@@ -82,33 +120,32 @@ padding:10px;
 
 </table>
 
-<br>
-
-<button onclick="logout()">Logout</button>
+<button class="logout" onclick="logout()">Logout</button>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-import { 
+import {
 getFirestore,
 collection,
 addDoc,
-getDocs
+getDocs,
+serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import {
 getAuth,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDpV_nRiRt2cToNGaFW1bi55hsb-7p6Ig8",
-  authDomain: "suryapanti-pharma-store.firebaseapp.com",
-  projectId: "suryapanti-pharma-store",
-  storageBucket: "suryapanti-pharma-store.firebasestorage.app",
-  messagingSenderId: "960716528234",
-  appId: "1:960716528234:web:0d1968b04794a49bbb8813"
+apiKey: "AIzaSyDpV_nRiRt2cToNGaFW1bi55hsb-7p6Ig8",
+authDomain: "suryapanti-pharma-store.firebaseapp.com",
+projectId: "suryapanti-pharma-store",
+storageBucket: "suryapanti-pharma-store.firebasestorage.app",
+messagingSenderId: "960716528234",
+appId: "1:960716528234:web:0d1968b04794a49bbb8813"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -117,22 +154,18 @@ const db = getFirestore(app);
 
 const auth = getAuth(app);
 
-
 let uidCounter = 1;
-
 
 document.getElementById("patientForm").addEventListener("submit", async(e)=>{
 
 e.preventDefault();
 
 let name=document.getElementById("name").value;
-
 let age=document.getElementById("age").value;
 
 let now=new Date();
 
 let date=now.toLocaleDateString();
-
 let time=now.toLocaleTimeString();
 
 let uid="P"+uidCounter++;
@@ -143,7 +176,8 @@ uid:uid,
 name:name,
 age:age,
 date:date,
-time:time
+time:time,
+created:serverTimestamp()
 
 });
 
@@ -152,7 +186,6 @@ document.getElementById("patientForm").reset();
 loadPatients();
 
 });
-
 
 async function loadPatients(){
 
@@ -169,13 +202,11 @@ let data=doc.data();
 table.innerHTML+=`
 
 <tr>
-
 <td>${data.uid}</td>
 <td>${data.name}</td>
 <td>${data.age}</td>
 <td>${data.date}</td>
 <td>${data.time}</td>
-
 </tr>
 
 `;
@@ -185,7 +216,6 @@ table.innerHTML+=`
 }
 
 loadPatients();
-
 
 window.logout=function(){
 
