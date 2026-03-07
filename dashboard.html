@@ -105,6 +105,18 @@ async function generateUID(){
 }
 
 window.addPatient=async function(){
+  <h2>Patient List</h2>
+
+<table border="1" width="100%">
+<thead>
+<tr>
+<th>Name</th>
+<th>Age</th>
+</tr>
+</thead>
+
+<tbody id="patientList"></tbody>
+</table>
 
   const now=new Date();
   const uid=await generateUID();
